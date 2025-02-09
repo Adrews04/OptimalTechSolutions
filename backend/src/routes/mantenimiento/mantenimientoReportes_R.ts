@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import {
     getReportesActivos_C,
     marcarTareaHecha_C
-} from "../../controllers/mantenimiento/mantenimientoReportes_C.js";
+} from "../../controllers/mantenimiento/mantenimientoReportes_C";
 
 const mantenimientoReportesRouter = express.Router();
 

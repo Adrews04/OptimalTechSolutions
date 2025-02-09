@@ -1,21 +1,19 @@
 import express from "express";
 
-// Función para obtener botones a demás paneles
-const getBotonesPaneles_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const botonesPaneles = await BotonesPanelesModel.find().lean();
-        res.status(200).send(botonesPaneles);
-    } catch (error) {
-        if (error instanceof Error) {
-            throw error;
-        }
-    }
-};
+import AlertasFalloModel from "../../models/admin/alertasFallo";
+import LucesModel from "../../models/admin/luces";
+import AguasModel from "../../models/admin/aguas";
+import GasModel from "../../models/admin/gas";
+import ClimasModel from "../../models/admin/climas";
+import PersonasModel from "../../models/admin/personas";
+import AlertasProttocolosAccionablesModel from "../../models/admin/alertasProtocolosAccionables";
+
+
 
 // Función para obtener el historial de alertas
 const getHistorialAlertas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const historialAlertas = await HistorialAlertasModel.find().lean();
+        const historialAlertas = await AlertasFalloModel.find().lean();
         res.status(200).send(historialAlertas);
     } catch (error) {
         if (error instanceof Error) {
@@ -27,7 +25,7 @@ const getHistorialAlertas_C = async (_req: express.Request, res: express.Respons
 // Función para obtener el historial de acciones automáticas
 const getHistorialAccionesAutomaticas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const historialAccionesAutomaticas = await HistorialAccionesAutomaticasModel.find().lean();
+        const historialAccionesAutomaticas = await AlertasProttocolosAccionablesModel.find().lean();
         res.status(200).send(historialAccionesAutomaticas);
     } catch (error) {
         if (error instanceof Error) {
@@ -39,7 +37,7 @@ const getHistorialAccionesAutomaticas_C = async (_req: express.Request, res: exp
 // Función para obtener los recursos de agua
 const getRecursosAgua_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const recursosAgua = await RecursosAguaModel.find().lean();
+        const recursosAgua = await AguasModel.find().lean();
         res.status(200).send(recursosAgua);
     } catch (error) {
         if (error instanceof Error) {
@@ -51,7 +49,7 @@ const getRecursosAgua_C = async (_req: express.Request, res: express.Response, n
 // Función para obtener los recursos de luces
 const getRecursosLuces_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const recursosLuces = await RecursosLucesModel.find().lean();
+        const recursosLuces = await LucesModel.find().lean();
         res.status(200).send(recursosLuces);
     } catch (error) {
         if (error instanceof Error) {
@@ -63,7 +61,7 @@ const getRecursosLuces_C = async (_req: express.Request, res: express.Response, 
 // Función para obtener los recursos de gas
 const getRecursosGas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const recursosGas = await RecursosGasModel.find().lean();
+        const recursosGas = await GasModel.find().lean();
         res.status(200).send(recursosGas);
     } catch (error) {
         if (error instanceof Error) {
@@ -75,7 +73,7 @@ const getRecursosGas_C = async (_req: express.Request, res: express.Response, ne
 // Función para obtener los recursos de climas
 const getRecursosClimas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const recursosClimas = await RecursosClimasModel.find().lean();
+        const recursosClimas = await ClimasModel.find().lean();
         res.status(200).send(recursosClimas);
     } catch (error) {
         if (error instanceof Error) {
@@ -87,7 +85,7 @@ const getRecursosClimas_C = async (_req: express.Request, res: express.Response,
 // Función para obtener los recursos de personas
 const getRecursosPersonas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const recursosPersonas = await RecursosPersonasModel.find().lean();
+        const recursosPersonas = await PersonasModel.find().lean();
         res.status(200).send(recursosPersonas);
     } catch (error) {
         if (error instanceof Error) {
@@ -99,7 +97,7 @@ const getRecursosPersonas_C = async (_req: express.Request, res: express.Respons
 // Función para obtener las personas actuales
 const getActualPersonas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const actualPersonas = await ActualPersonasModel.find().lean();
+        const actualPersonas = await PersonasModel.find().lean();
         res.status(200).send(actualPersonas);
     } catch (error) {
         if (error instanceof Error) {
@@ -109,7 +107,6 @@ const getActualPersonas_C = async (_req: express.Request, res: express.Response,
 };
 
 export {
-    getBotonesPaneles_C,
     getHistorialAlertas_C,
     getHistorialAccionesAutomaticas_C,
     getRecursosAgua_C,

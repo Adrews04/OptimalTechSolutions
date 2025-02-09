@@ -1,9 +1,11 @@
 import express from "express";
 
+import ReportesFallosModel from "../../models/mantenimiento/reportesFallos";
+
 // Función para obtener reportes activos
 const getReportesActivos_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const reportesActivos = await ReportesActivosModel.find().lean();
+        const reportesActivos = await ReportesFallosModel.find().lean();
         res.status(200).send(reportesActivos);
     } catch (error) {
         if (error instanceof Error) {
@@ -15,7 +17,7 @@ const getReportesActivos_C = async (_req: express.Request, res: express.Response
 // Función para marcar "tarea hecha"
 const marcarTareaHecha_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const tareaHecha = await TareasModel.findByIdAndUpdate(req.params.id, { estado: "hecha" }, { new: true }).lean();
+        const tareaHecha = await ReportesFallosModel.findByIdAndUpdate(req.params.id, { estado: "hecha" }, { new: true }).lean();
         res.status(200).send(tareaHecha);
     } catch (error) {
         if (error instanceof Error) {

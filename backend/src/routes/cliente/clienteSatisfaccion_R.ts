@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import {
     getHistorialReservas_C,
     enviarSatisfaccion_C
-} from "../../controllers/cliente/clienteSatisfaccion_C.js";
+} from "../../controllers/cliente/clienteSatisfaccion_C";
 
 const clienteSatisfaccionRouter = express.Router();
 

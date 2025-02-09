@@ -1,22 +1,13 @@
 import express from "express";
 
+import ContactarModel from "../../models/cliente/contactar";
+import ReservaModel from "../../models/reserva"; 
+
 // Función para obtener disponibilidades
 const getDisponibilidades_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const disponibilidades = await DisponibilidadesModel.find().lean();
+        const disponibilidades = await ReservaModel.find().lean();
         res.status(200).send(disponibilidades);
-    } catch (error) {
-        if (error instanceof Error) {
-            throw error;
-        }
-    }
-};
-
-// Función para obtener precios
-const getPrecios_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const precios = await PreciosModel.find().lean();
-        res.status(200).send(precios);
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -37,9 +28,9 @@ const getContactar_C = async (_req: express.Request, res: express.Response, next
 };
 
 // Función para reservar
-const getReservar_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const postReservar_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const nuevaReserva = new ReservasModel(req.body);
+        const nuevaReserva = new ReservaModel(req.body);
         await nuevaReserva.save();
         res.status(200).send(nuevaReserva);
     } catch (error) {
@@ -51,7 +42,6 @@ const getReservar_C = async (req: express.Request, res: express.Response, next: 
 
 export {
     getDisponibilidades_C,
-    getPrecios_C,
     getContactar_C,
-    getReservar_C
+    postReservar_C
 };

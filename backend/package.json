@@ -2,22 +2,28 @@
   "name": "codigo",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "ts-node src/index.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts"
-  },
+"scripts": {
+  "build": "tsc",
+  "start": "ts-node src/index.ts",  
+  "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
+  "test-mqtt": "ts-node src/test-mqtt.ts"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.96",
     "@types/node": "^22.13.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
   "description": "",
   "dependencies": {
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.10.0",
+    "mqtt": "^5.10.3"
   }
 }

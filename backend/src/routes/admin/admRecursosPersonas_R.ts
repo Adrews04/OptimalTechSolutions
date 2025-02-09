@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import {
-    getBotonesPaneles_C,
     getHistorialAlertas_C,
     getHistorialAccionesAutomaticas_C,
     getRecursosAgua_C,
@@ -9,11 +8,10 @@ import {
     getRecursosClimas_C,
     getRecursosPersonas_C,
     getActualPersonas_C
-} from "../../controllers/admin/admRecursosPersonas_C.js";
+} from "../../controllers/admin/admRecursosPersonas_C";
 
 const admRecursosPersonasRouter = express.Router();
 
-admRecursosPersonasRouter.get("/botones/paneles:id", getBotonesPaneles_C);
 admRecursosPersonasRouter.get("/historial/alerta:id", getHistorialAlertas_C);
 admRecursosPersonasRouter.get("/historial/acciones-automaticas:id", getHistorialAccionesAutomaticas_C);
 admRecursosPersonasRouter.get("/recursos/agua", getRecursosAgua_C);

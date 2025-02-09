@@ -3,7 +3,7 @@ import {
     getHistorialReportes_C,
     getAnalisis_C,
     getPredicciones_C
-} from "../../controllers/admin/admReportes_C.js";
+} from "../../controllers/admin/admReportes_C";
 
 const admReportesRouter = express.Router();
 
