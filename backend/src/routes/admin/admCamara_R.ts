@@ -2,57 +2,70 @@ import express from "express";
 
 import {
     getCamaraById_C,
-    getLucesDisponibles_C,
+    getLuzDisponibles_C,
     getAguasDisponibles_C,
     getGasDisponible_C,
-    getClimasDisponibles_C,
-    toggleLuces_C,
+    toggleLuz_C,
     toggleAguas_C,
     toggleGas_C,
-    toggleClimas_C,
-    getHistorialLuces_C,
+    getHistorialLuz_C,
     getHistorialAguas_C,
     getHistorialGas_C,
-    getHistorialClimas_C,
     getHistorialAccionesAutomaticas_C,
+    getHistorialTemperatura_C,
     getCantidadPersonas_C,
     getHistorialPersonas_C,
-    getPrediccionPersonas_C,
+    /* getPrediccionPersonas_C,
     getPrediccionAgua_C,
-    getPrediccionLuces_C,
+    getPrediccionLuz_C,
     getPrediccionGas_C,
-    getPrediccionClima_C,
+    getPrediccionClima_C, */
+    postAlerta_C,
     getAlertasProtocolosAccionables_C,
-    getAlertasProtocolosActuales_C
+    getAlertasProtocolosActuales_C,
+    getTemperatura_C,
+    getConsumoAgua_C,
+    getConsumoGas_C,
+    getConsumoLuz_C,
+    postLuz_C,
+    postAguas_C,
+    postGas_C
 } from "../../controllers/admin/admCamara_C";
 
-import {simularSensorLuz} from "../../simuladorSensores/sensorLuz";
 
 const admCamaraRouter = express.Router();
 
-admCamaraRouter.get("/camara/:id", getCamaraById_C);
-admCamaraRouter.get("/luces/:idZona", getLucesDisponibles_C);
+admCamaraRouter.get("/camara/:idZona", getCamaraById_C);
+admCamaraRouter.get("/Luz/:idZona", getLuzDisponibles_C);
 admCamaraRouter.get("/aguas/:idZona", getAguasDisponibles_C);
 admCamaraRouter.get("/gas/:idZona", getGasDisponible_C);
-admCamaraRouter.get("/climas/:idZona", getClimasDisponibles_C);
-admCamaraRouter.post("/luces/toggle/agregarLuz", simularSensorLuz);
-admCamaraRouter.put("/luces/toggle/:idZona/:idTuboLed", toggleLuces_C);
-admCamaraRouter.post("/aguas/toggle/:idZona/:idSalidaAgua", toggleAguas_C);
-admCamaraRouter.post("/gas/toggle/:idZona/:idSalidaGas", toggleGas_C);
-admCamaraRouter.post("/climas/toggle/:idZona/:idClima", toggleClimas_C);
-admCamaraRouter.get("/historial/luces/:id/:idTuboLed", getHistorialLuces_C);
+admCamaraRouter.get("/temperatura/:idZona", getTemperatura_C);
+admCamaraRouter.put("/Luz/toggle/:idZona/:idTuboLed", toggleLuz_C);
+admCamaraRouter.post("/aguas/toggle/:idZona/:idSalida", toggleAguas_C);
+admCamaraRouter.post("/gas/toggle/:idZona/:idSalida", toggleGas_C);
+admCamaraRouter.get("/historial/Luz/:id/:idTuboLed", getHistorialLuz_C);
 admCamaraRouter.get("/historial/aguas/:id/:idSalidaAgua", getHistorialAguas_C);
 admCamaraRouter.get("/historial/gas/:id/:idSalidaGas", getHistorialGas_C);
-admCamaraRouter.get("/historial/climas/:id/:idClima", getHistorialClimas_C);
+admCamaraRouter.get("/historial/temperatura/:idZona", getHistorialTemperatura_C);
 admCamaraRouter.get("/historial/acciones-automaticas/:idZona", getHistorialAccionesAutomaticas_C);
 admCamaraRouter.get("/historial/personas/:idZona", getHistorialPersonas_C);
 admCamaraRouter.get("/personas/actual/:idZona", getCantidadPersonas_C);
-admCamaraRouter.get("/personas/prediccion:id", getPrediccionPersonas_C);
-admCamaraRouter.get("/agua/prediccion:id", getPrediccionAgua_C);
-admCamaraRouter.get("/luces/prediccion:id", getPrediccionLuces_C);
-admCamaraRouter.get("/gas/prediccion:id", getPrediccionGas_C);
-admCamaraRouter.get("/clima/prediccion:id", getPrediccionClima_C);
-admCamaraRouter.get("/alertas/protocolos-accionables:id", getAlertasProtocolosAccionables_C);
-admCamaraRouter.get("/alertas/protocolos-actuales:id", getAlertasProtocolosActuales_C);
+admCamaraRouter.get("/consumo/agua/:idZona/:idSalidaAgua", getConsumoAgua_C);
+admCamaraRouter.get("/consumo/gas/:idZona/:idSalidaGas", getConsumoGas_C);
+admCamaraRouter.get("/consumo/Luz/:idZona/:idTuboLed", getConsumoLuz_C);
+/* admCamaraRouter.get("/personas/prediccion/:id", getPrediccionPersonas_C);
+admCamaraRouter.get("/agua/prediccion/:id", getPrediccionAgua_C);
+admCamaraRouter.get("/Luz/prediccion/:id", getPrediccionLuz_C);
+admCamaraRouter.get("/gas/prediccion/:id", getPrediccionGas_C);
+admCamaraRouter.get("/clima/prediccion/:id", getPrediccionClima_C); */
+admCamaraRouter.post("/alertas/accionar/:id", postAlerta_C);
+admCamaraRouter.get("/alertas/protocolos-accionables/:idZona", getAlertasProtocolosAccionables_C);
+
+
+admCamaraRouter.post("/alertas/agregar", postAlerta_C);
+admCamaraRouter.post("/Luz/agregar/:idZona", postLuz_C);
+admCamaraRouter.post("/aguas/agregar/:idZona", postAguas_C);
+admCamaraRouter.post("/gas/agregar/:idZona", postGas_C);
+
 
 export default admCamaraRouter;

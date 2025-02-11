@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+/* import express, { Request, Response } from "express";
 import {
     getHistorialReportes_C,
     getAnalisis_C,
@@ -11,4 +11,4 @@ admReportesRouter.get("/histprial/reportes", getHistorialReportes_C);
 admReportesRouter.get("/reportes/analisis", getAnalisis_C);
 admReportesRouter.get("/reportes/predicciones", getPredicciones_C);
 
-export default admReportesRouter;
+export default admReportesRouter; */

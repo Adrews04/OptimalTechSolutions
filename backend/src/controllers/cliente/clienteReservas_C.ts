@@ -4,22 +4,10 @@ import ContactarModel from "../../models/cliente/contactar";
 import ReservaModel from "../../models/reserva"; 
 
 // Función para obtener disponibilidades
-const getDisponibilidades_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+const getNoDisponibilidades_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const disponibilidades = await ReservaModel.find().lean();
-        res.status(200).send(disponibilidades);
-    } catch (error) {
-        if (error instanceof Error) {
-            throw error;
-        }
-    }
-};
-
-// Función para contactar
-const getContactar_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const contactar = await ContactarModel.find().lean();
-        res.status(200).send(contactar);
+        const noDisponibles = await ReservaModel.find().lean();
+        res.status(200).send(noDisponibles);
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -28,20 +16,20 @@ const getContactar_C = async (_req: express.Request, res: express.Response, next
 };
 
 // Función para reservar
-const postReservar_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const postReservar_C = async (req: express.Request, res: express.Response) => {
     try {
         const nuevaReserva = new ReservaModel(req.body);
+
         await nuevaReserva.save();
         res.status(200).send(nuevaReserva);
     } catch (error) {
-        if (error instanceof Error) {
-            throw error;
-        }
+        console.error('Error en postReservar_C:', error);
+        res.status(500).send({ error: 'Error al guardar la reserva' });
     }
 };
 
+
 export {
-    getDisponibilidades_C,
-    getContactar_C,
+    getNoDisponibilidades_C,
     postReservar_C
 };

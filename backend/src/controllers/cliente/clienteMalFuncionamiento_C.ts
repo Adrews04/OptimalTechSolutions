@@ -1,13 +1,13 @@
 import express from "express";
 
-import MalFuncionamientoModel from "../../models/cliente/malFuncionamiento";
 import ContactarModel from "../../models/cliente/contactar";
+import AlertasProtocolosAccionablesModel from "../../models/admin/alertasProtocolosAccionables";
 
 
 // Función para enviar mal funcionamiento
 const enviarMalFuncionamiento_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const malFuncionamiento = new MalFuncionamientoModel(req.body);
+        const malFuncionamiento = new AlertasProtocolosAccionablesModel(req.body);
         await malFuncionamiento.save();
         res.status(200).send("Mal funcionamiento enviado, gracias");
     } catch (error) {

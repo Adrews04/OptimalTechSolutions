@@ -1,12 +1,12 @@
 import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
-const LucesSchema = new Schema({
+const LuzSchema = new Schema({
     consumoLuz: { type: Number, required: true},
     hora: { type: Date, required: true },
     idZona: { type: Number, required: true },
     idTuboLed: { type: Number, required: true }
 });
 
-const LucesModel = mongoose.model('LucesSchema', LucesSchema);
+const LuzModel = mongoose.model('LuzSchema', LuzSchema);
 
-export default LucesModel;
+export default LuzModel;

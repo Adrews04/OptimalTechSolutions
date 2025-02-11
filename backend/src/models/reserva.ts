@@ -5,7 +5,6 @@ const ReservaSchema = new Schema({
     fechaHoraInicialReserva: { type: Date, required: true },
     fechaHoraFinalReserva: { type: Date, required: true },
     usuarioId: { type: Number, required: true },
-
     satisfaccion: { type: Number, required: true },
     comentarios: { type: String, required: false }
 })

@@ -7,6 +7,6 @@ import {
 const clienteSatisfaccionRouter = express.Router();
 
 clienteSatisfaccionRouter.get("/historial/reservas", getHistorialReservas_C);
-clienteSatisfaccionRouter.post("/reservas/satisfaccion:id", enviarSatisfaccion_C);
+clienteSatisfaccionRouter.post("/reservas/satisfaccion/:id", enviarSatisfaccion_C);
 
 export default clienteSatisfaccionRouter;

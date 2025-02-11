@@ -1,14 +1,23 @@
 import { publishData } from './mqttPublisher';
+import LucesModel from '../models/dispositivos/luces';
 
-export const simularSensorLuz = async () => {
+export const simularSensorLuz = async (Zona: number, TuboLed: number) => {
 
-    const consumoLuz = Math.random() * 0.1112; // Si el estado es true, consume luz aleatorio, si no, 0
 
+    const luz = await LucesModel.findOne({ idZona: Zona, idTuboLed: TuboLed }).lean();
+
+    if (!luz) {
+        console.log('SENSOR DE LUZ DESCONECTADO: Sensor ', TuboLed, ' en zona ', Zona, ' sin señal');
+        return;
+    }
+
+    const consumoLuz = (luz.status) ? (Math.random() * 8000) : 0; // Si el estado es true, consume luz aleatorio, si no, 0
+        
     const datosLuz = {
         consumoLuz: consumoLuz,
         hora: new Date(), // Usamos la fecha actual como está
-        idZona: Math.floor(Math.random() * 25), // Suponiendo que el conjunto tiene 25 zonas distintas que utilizan luz
-        idTuboLed: Math.floor(Math.random() * 10) // Suponiendo que cada zona tiene 10 tubos LED que utilizan luz
+        idZona: Zona,
+        idTuboLed: TuboLed
     };
 
     publishData('sensors/luz', JSON.stringify(datosLuz)); // Publicar los datos como JSON

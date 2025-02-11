@@ -1,11 +1,12 @@
 // src/mqtt/mqttClient.ts
 import mqtt from 'mqtt';
 import dotenv from 'dotenv';
-import LucesModel from '../models/admin/luces';
+import LucesModel from '../models/admin/Luz';
 import AguasModel from '../models/admin/aguas';
 import GasModel from '../models/admin/gas';
-import ClimasModel from '../models/admin/climas';
+import ClimasModel from '../models/admin/temperatura';
 import PersonasModel from '../models/admin/personas';
+import HuellaModel from '../models/admin/huella';
 
 
 dotenv.config();
@@ -155,6 +156,22 @@ const mqttClient = {
               await newRegistroPersonas.save();
               console.log('✅ Datos de sensor (personas) almacenados en MongoDB');
             } catch { console.log("Error en el mensaje de personas") }
+            break;
+          case 'sensors/huella':
+              console.log(`📩 Mensaje recibido en "${topic}": ${message.toString()}`);
+              try {
+                // Parsear el mensaje JSON recibido
+                const data = JSON.parse(message.toString());
+                // Crear una nueva instancia usando el modelo HuellaModel
+                const newRegistroHuella = new HuellaModel({
+                  usuario: data.usuario,             // Valor numérico
+                  hora: data.hora ? new Date(data.hora) : new Date(),  // Convertir a Date o usar la fecha actual
+                  idZona: data.idZona,                       // Identificador de zona
+                });
+                // Guardar en MongoDB
+                await newRegistroHuella.save();
+                console.log('✅ Datos de sensor (huella) almacenados en MongoDB');
+              } catch { console.log("Error en el mensaje de huella") }
             break;
         }
       });

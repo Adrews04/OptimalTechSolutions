@@ -1,21 +1,21 @@
 import express from "express";
 
-import CamaraModel from "../../models/admin/camara";
-import LucesModel from "../../models/admin/luces";
+import SalidasAguaModel from "../../models/dispositivos/salidasAgua";
+import TemperaturaModel from "../../models/admin/temperatura";
+import SalidasGasModel from "../../models/dispositivos/salidasGas";
+import CamaraModel from "../../models/dispositivos/camara";
+import LuzModel from "../../models/admin/Luz";
 import AguasModel from "../../models/admin/aguas";
 import GasModel from "../../models/admin/gas";
-import ClimasModel from "../../models/admin/climas";
 import PersonasModel from "../../models/admin/personas";
 import AlertasProtocolosAccionablesModel from "../../models/admin/alertasProtocolosAccionables";
-import { simularSensorLuz } from "../../simuladorSensores/sensorLuz";
-import { simularSensorAgua } from "../../simuladorSensores/sensorAgua";
-import { simularSensorGas } from "../../simuladorSensores/sensorGas";
-import { simularSensorClima } from "../../simuladorSensores/sensorClimas";
+import LucesModel from "../../models/dispositivos/luces";
+import SalidaAguaModel from "../../models/dispositivos/salidasAgua";
 
 // Función para obtener la cámara por ID
 const getCamaraById_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const camara = await CamaraModel.findById(req.params.id).lean();
+        const camara = await CamaraModel.find({ idZona: req.params.idZona }).lean();
         res.status(200).send(camara);
     } catch (error) {
         if (error instanceof Error) {
@@ -24,11 +24,11 @@ const getCamaraById_C = async (req: express.Request, res: express.Response, next
     }
 };
 
-// Función para obtener las luces disponibles
-const getLucesDisponibles_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener las Luz disponibles
+const getLuzDisponibles_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const luces = await LucesModel.find({ idZona: req.params.idZona }).lean();
-        res.status(200).send(luces);
+        const Luz = await LuzModel.find({ idZona: req.params.idZona }).lean();
+        res.status(200).send(Luz);
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -60,11 +60,11 @@ const getGasDisponible_C = async (req: express.Request, res: express.Response, n
     }
 };
 
-// Función para obtener los climas disponibles
-const getClimasDisponibles_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener los Temperatura disponibles
+const getTemperaturaDisponibles_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const climas = await ClimasModel.find({ idZona: req.params.idZona }).lean();
-        res.status(200).send(climas);
+        const Temperatura = await TemperaturaModel.find({ idZona: req.params.idZona }).lean();
+        res.status(200).send(Temperatura);
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -72,17 +72,15 @@ const getClimasDisponibles_C = async (req: express.Request, res: express.Respons
     }
 };
 
-const toggleLuces_C = async (req: express.Request, res: express.Response) => {
+const toggleLuz_C = async (req: express.Request, res: express.Response) => {
     try {
-        const gastoActual = await LucesModel.findOne({ idZona: req.params.idZona, idTuboLed: req.params.idTuboLed }).lean();
+        const gastoActual = await LuzModel.findOne({ idZona: req.params.idZona, idTuboLed: req.params.idTuboLed }).lean();
 
         if (!gastoActual) {
             res.status(404).json({ message: "Luz no encontrada" });
         }
         else {
             const estado = gastoActual.consumoLuz > 0;
-
-            //await simularSensorLuz(estado);
 
             res.status(200).json({ estado });  // Enviar la respuesta JSON}
         }
@@ -96,72 +94,60 @@ const toggleLuces_C = async (req: express.Request, res: express.Response) => {
 // Función para activar/desactivar aguas
 const toggleAguas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const { idZona, idSalidaAgua } = req.params;
-        const gastoActual = await AguasModel.findOne({ idZona: idZona, idSalidaAgua: idSalidaAgua }).lean();
-        if (!gastoActual) {
-            res.status(404).send({ message: "Agua no encontrada" });
-        } else {
-            const estado = gastoActual.consumoAgua > 0 ? true : false;  // Si el gasto actual es mayor a 0, el agua está activada
-            if (estado) {
-                simularSensorAgua();
-            }
-            res.status(200).send(estado);
+
+        const salidaAgua = await SalidasAguaModel.findOne({ idZona: req.params.idzona, idSalida: req.params.idSalida }).lean();
+
+        if (!salidaAgua || !salidaAgua.status) {
+            res.status(404).send({ message: "Salida de Agua no encontrada" });
         }
+
+        const salidaDeAgua = await SalidasAguaModel.findOneAndUpdate(
+            { idZona: req.params.idzona, idSalida: req.params.idSalida },
+            { $set: { status: (salidaAgua?.status == true) ? false : true } },
+            { new: true }
+        ).lean();
+
+        res.status(200).send("Salida de agua accionada correctamente");
     } catch (error) {
         if (error instanceof Error) {
-            next(error);  // Usar next para pasar el error al middleware de manejo de errores
+            throw error;
         }
     }
 };
+
 
 // Función para activar/desactivar gas
 const toggleGas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const gastoActual = await GasModel.findOne({ idZona: req.params.idZona, idSalidaGas: req.params.idSalidaGas }).lean();
-        if (!gastoActual) {
-            res.status(404).send({ message: "Gas no encontrado" });
+        const salidaGas = await SalidasGasModel.findOne({ idZona: req.params.idZona, idSalida: req.params.idSalida }).lean();
+
+        if (!salidaGas || !salidaGas.status) {
+            res.status(404).send({ message: "Salida de Gas no encontrada" });
         } else {
-            const estado = gastoActual.consumoGas > 0 ? true : false;  // Si el gasto actual es mayor a 0, el gas está activado
-            if (estado) {
-                simularSensorGas();
-            }
-            res.status(200).send(estado);
+            const salidaDeGas = await SalidasGasModel.findOneAndUpdate(
+                { idZona: req.params.idZona, idSalida: req.params.idSalida },
+                { $set: { status: (salidaGas.status == true) ? false : true } },
+                { new: true }
+            ).lean();
+
+            res.status(200).send("Salida de gas accionada correctamente");
         }
     } catch (error) {
         if (error instanceof Error) {
-            next(error);  // Usar next para pasar el error al middleware de manejo de errores
+            next(error);
         }
     }
 };
 
-// Función para activar/desactivar climas
-const toggleClimas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const gastoActual = await ClimasModel.findOne({ idZona: req.params.idZona, idClima: req.params.idClima }).lean();
-        if (!gastoActual) {
-            res.status(404).send({ message: "Clima no encontrado" });
-        } else {
-            const estado = gastoActual.consumoElectrico > 0 || gastoActual.consumoGas > 0 ? true : false;  // Si el gasto actual es mayor a 0, el clima está activado
-            if (estado) {
-                simularSensorClima();
-            }
-            res.status(200).send(estado);
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            next(error);  // Usar next para pasar el error al middleware de manejo de errores
-        }
-    }
-};
 
-// Función para obtener el historial de luces
-const getHistorialLuces_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener el historial de Luz
+const getHistorialLuz_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const historialLuces = await LucesModel.find({ idZona: req.params.idZona, idTuboLed: req.params.idTuboLed }).lean();
-        if (!historialLuces) {
-            res.status(404).send({ message: "Historial de luces no encontrado" });
+        const historialLuz = await LuzModel.find({ idZona: req.params.idZona, idTuboLed: req.params.idTuboLed }).lean();
+        if (!historialLuz) {
+            res.status(404).send({ message: "Historial de Luz no encontrado" });
         } else {
-            res.status(200).send(historialLuces);
+            res.status(200).send(historialLuz);
         }
     } catch (error) {
         if (error instanceof Error) {
@@ -202,14 +188,14 @@ const getHistorialGas_C = async (req: express.Request, res: express.Response, ne
     }
 };
 
-// Función para obtener el historial de climas
-const getHistorialClimas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener el historial de Temperatura
+const getHistorialTemperatura_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const historialClimas = await ClimasModel.find({ idZona: req.params.idZona, idClima: req.params.idClima }).lean();
-        if (!historialClimas) {
-            res.status(404).send({ message: "Historial de climas no encontrado" });
+        const historialTemperatura = await TemperaturaModel.find({ idZona: req.params.idZona }).lean();
+        if (!historialTemperatura) {
+            res.status(404).send({ message: "Historial de Temperatura no encontrado" });
         } else {
-            res.status(200).send(historialClimas);
+            res.status(200).send(historialTemperatura);
         }
     } catch (error) {
         if (error instanceof Error) {
@@ -221,7 +207,7 @@ const getHistorialClimas_C = async (req: express.Request, res: express.Response,
 // Función para obtener el historial de acciones automáticas
 const getHistorialAccionesAutomaticas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const historialAccionesAutomaticas = await AlertasProtocolosAccionablesModel.find({ idZona: req.params.idZona }).lean();
+        const historialAccionesAutomaticas = await AlertasProtocolosAccionablesModel.find({ idZona: req.params.idZona, idUsuario: 0 }).lean();
         if (!historialAccionesAutomaticas) {
             res.status(404).send({ message: "Historial de acciones automáticas no encontrado" });
         } else {
@@ -237,11 +223,12 @@ const getHistorialAccionesAutomaticas_C = async (req: express.Request, res: expr
 // Función para obtener la cantidad de personas
 const getCantidadPersonas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const cantidadPersonas = await PersonasModel.find({ idZona: req.params.idZona, date: new Date() }).lean();
+        const cantidadPersonas = await PersonasModel.findOne({ idZona: req.params.idZona }).sort({ _id: -1 });
+
         if (!cantidadPersonas) {
             res.status(404).send({ message: "Cantidad de personas no encontrada" });
         } else {
-            res.status(200).send(cantidadPersonas);
+            res.status(200).send("Cantidad de personas: " + cantidadPersonas.cantidadPersonas);
         }
     } catch (error) {
         if (error instanceof Error) {
@@ -253,12 +240,16 @@ const getCantidadPersonas_C = async (req: express.Request, res: express.Response
 // Función para obtener el consumo de agua
 const getConsumoAgua_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const consumoAgua = await AguasModel.find({ idZona: req.params.idZona, date: new Date() }).lean();
+        const consumoAgua = await AguasModel.findOne({ idZona: req.params.idZona, idSalidaAgua: req.params.idSalidaAgua }).sort({ _id: -1 });
         if (!consumoAgua) {
-            return res.status(404).send({ message: "Consumo de agua no encontrado" });
+            res.status(404).send({ message: "Consumo de agua no encontrado" });
         }
-        const consumosAgua = consumoAgua.map(agua => agua.consumoAgua);
-        res.status(200).send(consumosAgua);
+
+        if (consumoAgua) {
+            res.status(200).send("Consumo de agua: " + consumoAgua.consumoAgua);
+        } else {
+            res.status(404).send({ message: "Consumo de agua no encontrado" });
+        }
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -269,12 +260,16 @@ const getConsumoAgua_C = async (req: express.Request, res: express.Response, nex
 // Función para obtener el consumo de gas
 const getConsumoGas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const consumoGas = await GasModel.find({ idZona: req.params.idZona, date: new Date() }).lean();
+        const consumoGas = await GasModel.findOne({ idZona: req.params.idZona, idSalidaGas: req.params.idSalidaGas }).sort({ _id: -1 });
+
         if (!consumoGas) {
-            return res.status(404).send({ message: "Consumo de gas no encontrado" });
+            res.status(404).send({ message: "Consumo de gas no encontrado" });
         }
-        const consumosGas = consumoGas.map(gas => gas.consumoGas);
-        res.status(200).send(consumosGas);
+        if (consumoGas) {
+            res.status(200).send("Consumo de gas: " + consumoGas.consumoGas);
+        } else {
+            res.status(404).send({ message: "Consumo de gas no encontrado" });
+        }
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -282,15 +277,17 @@ const getConsumoGas_C = async (req: express.Request, res: express.Response, next
     }
 };
 
-// Función para obtener el consumo de luces
-const getConsumoLuces_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener el consumo de Luz
+const getConsumoLuz_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const consumoLuces = await LucesModel.find({ idZona: req.params.idZona, date: new Date() }).lean();
-        if (!consumoLuces) {
-            return res.status(404).send({ message: "Consumo de luces no encontrado" });
+        const consumoLuz = await LuzModel.findOne({ idZona: req.params.idZona, idTuboLed: req.params.idTuboLed }).sort({ _id: -1 });
+        if (!consumoLuz) {
+            res.status(404).send({ message: "Consumo de Luz no encontrado" });
         }
-        const consumosLuz = consumoLuces.map(luz => luz.consumoLuz);
-        res.status(200).send(consumosLuz);
+
+        if (consumoLuz) {
+            res.status(200).send("Consumo de Luz: " + consumoLuz.consumoLuz);
+        }
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -298,15 +295,15 @@ const getConsumoLuces_C = async (req: express.Request, res: express.Response, ne
     }
 };
 
-// Función para obtener el consumo de climas
-const getConsumoGasClimas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener el consumo de Temperatura
+const getTemperatura_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const consumoClimas = await ClimasModel.find({ idZona: req.params.idZona, date: new Date() }).lean();
-        if (!consumoClimas) {
-            return res.status(404).send({ message: "Consumo de climas no encontrado" });
+        const Temperatura = await TemperaturaModel.findOne({ idZona: req.params.idZona }).sort({ _id: -1 });
+        if (!Temperatura) {
+            res.status(404).send({ message: "Temperatura no encontrada" });
         }
-        const consumosGas = consumoClimas.map(clima => clima.consumoGas);
-        res.status(200).send(consumosGas);
+
+        res.status(200).send("Temperatura en zona " + req.params.idZona + ": " + (Temperatura ? Temperatura.temperatura : "No disponible"));
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -314,21 +311,6 @@ const getConsumoGasClimas_C = async (req: express.Request, res: express.Response
     }
 };
 
-// Función para obtener el consumo eléctrico de climas
-const getConsumoElectricoClimas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const consumoElectricoClimas = await ClimasModel.find({ idZona: req.params.idZona, date: new Date(), consumoElectrico: { $gt: 0 } }).lean();
-        if (!consumoElectricoClimas) {
-            return res.status(404).send({ message: "Consumo eléctrico de climas no encontrado" });
-        }
-        const consumosElectricos = consumoElectricoClimas.map(clima => clima.consumoElectrico);
-        res.status(200).send(consumosElectricos);
-    } catch (error) {
-        if (error instanceof Error) {
-            throw error;
-        }
-    }
-};
 
 // Función para obtener el historial de personas
 const getHistorialPersonas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -346,7 +328,7 @@ const getHistorialPersonas_C = async (req: express.Request, res: express.Respons
     }
 };
 
-// Función para obtener la predicción de personas
+/* // Función para obtener la predicción de personas
 const getPrediccionPersonas_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const prediccionPersonas = await PersonasModel.find().lean();
@@ -356,7 +338,7 @@ const getPrediccionPersonas_C = async (_req: express.Request, res: express.Respo
             throw error;
         }
     }
-};
+}; 
 
 // Función para obtener la predicción de agua
 const getPrediccionAgua_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -370,11 +352,11 @@ const getPrediccionAgua_C = async (_req: express.Request, res: express.Response,
     }
 };
 
-// Función para obtener la predicción de luces
-const getPrediccionLuces_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener la predicción de Luz
+const getPrediccionLuz_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const prediccionLuces = await LucesModel.find().lean();
-        res.status(200).send(prediccionLuces);
+        const prediccionLuz = await LuzModel.find().lean();
+        res.status(200).send(prediccionLuz);
     } catch (error) {
         if (error instanceof Error) {
             throw error;
@@ -394,14 +376,81 @@ const getPrediccionGas_C = async (_req: express.Request, res: express.Response, 
     }
 };
 
-// Función para obtener la predicción de clima
-const getPrediccionClima_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Función para obtener la predicción de Temperatura
+const getPrediccionTemperatura_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const prediccionClima = await ClimasModel.find().lean();
-        res.status(200).send(prediccionClima);
+        const prediccionTemperatura = await TemperaturaModel.find().lean();
+        res.status(200).send(prediccionTemperatura);
     } catch (error) {
         if (error instanceof Error) {
             throw error;
+        }
+    }
+}; */
+
+const postAlerta_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const message = req.body.message;
+        const idUsuario = req.body.idUsuario;
+        const idZona = req.params.idZona;
+        const nuevaAlerta = new AlertasProtocolosAccionablesModel({
+            message: message,
+            idZona: idZona,
+            idUsuario: idUsuario
+        });
+        await nuevaAlerta.save();
+        res.status(200).send(nuevaAlerta);
+    } catch (error) {
+        if (error instanceof Error) {
+            next(error);  // Usar next para pasar el error al middleware de manejo de errores
+        }
+    }
+};
+
+const postLuz_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const nuevaLuz = new LucesModel({
+            idZona: req.params.idZona,
+            idTuboLed: req.body.idTuboLed,
+            status: true
+        });
+        await nuevaLuz.save();
+        res.status(200).send(nuevaLuz);
+    } catch (error) {
+        if (error instanceof Error) {
+            next(error);  // Usar next para pasar el error al middleware de manejo de errores
+        }
+    }
+};
+
+const postGas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const nuevoGas = new SalidasGasModel({
+            idZona: req.params.idZona,
+            idSalida: req.body.idSalida,
+            status: true
+        });
+        await nuevoGas.save();
+        res.status(200).send(nuevoGas);
+    } catch (error) {
+        if (error instanceof Error) {
+            next(error);  // Usar next para pasar el error al middleware de manejo de errores
+        }
+    }
+};
+
+const postAguas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const nuevaAgua = new SalidaAguaModel({
+            idZona: req.params.idZona,
+            idSalida: req.body.idSalida,
+            status: true
+        });
+        await nuevaAgua.save();
+        res.status(200).send(nuevaAgua);
+    } catch (error) {
+        if (error instanceof Error) {
+            next(error);  // Usar next para pasar el error al middleware de manejo de errores
         }
     }
 };
@@ -421,7 +470,7 @@ const getAlertasProtocolosAccionables_C = async (_req: express.Request, res: exp
 // Función para obtener alertas y protocolos actuales
 const getAlertasProtocolosActuales_C = async (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const alertasProtocolosActuales = await AlertasProtocolosAccionablesModel.find().lean();
+        const alertasProtocolosActuales = await AlertasProtocolosAccionablesModel.find().sort({ _id: -1 }).lean();
         res.status(200).send(alertasProtocolosActuales);
     } catch (error) {
         if (error instanceof Error) {
@@ -432,31 +481,33 @@ const getAlertasProtocolosActuales_C = async (_req: express.Request, res: expres
 
 export {
     getCamaraById_C,
-    getLucesDisponibles_C,
+    getLuzDisponibles_C,
     getAguasDisponibles_C,
     getGasDisponible_C,
-    getClimasDisponibles_C,
-    toggleLuces_C,
+    getTemperaturaDisponibles_C,
+    toggleLuz_C,
     toggleAguas_C,
     toggleGas_C,
-    toggleClimas_C,
-    getHistorialLuces_C,
+    getHistorialLuz_C,
     getHistorialAguas_C,
     getHistorialGas_C,
-    getHistorialClimas_C,
+    getHistorialTemperatura_C,
     getHistorialAccionesAutomaticas_C,
     getCantidadPersonas_C,
     getHistorialPersonas_C,
-    getPrediccionPersonas_C,
+    /* getPrediccionPersonas_C,
     getPrediccionAgua_C,
-    getPrediccionLuces_C,
+    getPrediccionLuz_C,
     getPrediccionGas_C,
-    getPrediccionClima_C,
+    getPrediccionTemperatura_C, */
+    postAlerta_C,
+    postLuz_C,
+    postAguas_C,
+    postGas_C,
     getAlertasProtocolosAccionables_C,
     getAlertasProtocolosActuales_C,
     getConsumoAgua_C,
     getConsumoGas_C,
-    getConsumoLuces_C,
-    getConsumoGasClimas_C,
-    getConsumoElectricoClimas_C
+    getConsumoLuz_C,
+    getTemperatura_C
 };

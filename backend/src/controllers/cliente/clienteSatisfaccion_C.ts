@@ -5,7 +5,7 @@ import ReservaModel from "../../models/reserva";
 // Función para obtener el historial de reservas
 const getHistorialReservas_C = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const historialReservas = await ReservaModel.find({clienteId: req.params.id, satisfaccion: 0}).lean();
+        const historialReservas = await ReservaModel.find({ satisfaccion: { $gt: 0 } }).lean();
         res.status(200).send(historialReservas);
     } catch (error) {
         if (error instanceof Error) {
