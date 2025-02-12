@@ -127,7 +127,7 @@ setInterval(async () => {
   await simularSensorLuz(6, 6); 
   await simularSensorLuz(6, 7); */
 
-}, 10000);
+}, 40000);
 
 // ---------------------- SENSORES DE AGUA ----------------------
 
@@ -186,7 +186,7 @@ setInterval(async () => {
   await simularSensorAgua(6, 5);
   await simularSensorAgua(6, 6);
   await simularSensorAgua(6, 7); */
-}, 10000);
+}, 40000);
 
 
 // ---------------------- SENSORES DE GAS ----------------------
@@ -245,7 +245,7 @@ setInterval(async () => {
   await simularSensorGas(6, 5);
   await simularSensorGas(6, 6);  
   await simularSensorGas(6, 7); */
-}, 10000)
+}, 40000)
 
 // ---------------------- SENSORES DE TEMPERATURA ----------------------
 
@@ -258,7 +258,7 @@ setInterval(async () => {
   await simularSensorTemperatura(5);
   await simularSensorTemperatura(6);
 
-}, 10000); 
+}, 40000); 
 
 // ---------------------- SENSORES DE MOVIMIENTO ----------------------
 setInterval(async () => {
@@ -270,7 +270,7 @@ await simularSensorMovimiento(4);
 await simularSensorMovimiento(5);
 await simularSensorMovimiento(6);
 
-}, 10000);
+}, 40000);
 
 // ---------------------- SENSORES DE HUELLA ----------------------
 setInterval(async () => {
@@ -292,4 +292,4 @@ setInterval(async () => {
   //ZONA 6
   await simularSensorHuella(6);
 
-}, 10000);
+}, 40000);

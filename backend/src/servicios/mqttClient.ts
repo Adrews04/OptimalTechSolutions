@@ -7,6 +7,7 @@ import GasModel from '../models/admin/gas';
 import ClimasModel from '../models/admin/temperatura';
 import PersonasModel from '../models/admin/personas';
 import HuellaModel from '../models/admin/huella';
+import AlertasProtocolosAccionablesModel from '../models/admin/alertasProtocolosAccionables';
 
 
 dotenv.config();
@@ -44,11 +45,11 @@ const mqttClient = {
             console.log('📡 Suscrito a sensors/gas');
           }
         });
-        this.client?.subscribe('sensors/climas', (err) => {
+        this.client?.subscribe('sensors/temperatura', (err) => {
           if (err) {
-            console.error('❌ Error al suscribirse a sensors/climas:', err);
+            console.error('❌ Error al suscribirse a sensors/temperatura:', err);
           } else {
-            console.log('📡 Suscrito a sensors/climas');
+            console.log('📡 Suscrito a sensors/temperatura');
           }
         });
         this.client?.subscribe('sensors/movimiento', (err) => {
@@ -58,7 +59,22 @@ const mqttClient = {
             console.log('📡 Suscrito a sensors/movimiento');
           } 
         });
+        
+        this.client?.subscribe('sensors/huella', (err) => {
+          if (err) {
+            console.error('❌ Error al suscribirse a sensors/huella:', err);
+          } else {
+            console.log('📡 Suscrito a sensors/huella');
+          } 
         });
+        this.client?.subscribe('cv/gestures', (err) => {
+          if (err) {
+            console.error('❌ Error al suscribirse a cv/gestures:', err);
+          } else {
+            console.log('📡 Suscrito a cv/gestures');
+          } 
+        });
+      });
       });
 
       // Procesar los mensajes recibidos
@@ -172,6 +188,22 @@ const mqttClient = {
                 await newRegistroHuella.save();
                 console.log('✅ Datos de sensor (huella) almacenados en MongoDB');
               } catch { console.log("Error en el mensaje de huella") }
+            break;
+            case 'cv/gestures':
+              console.log(`📩 Mensaje recibido en "${topic}": ${message.toString()}`);
+              /* try {
+                // Parsear el mensaje JSON recibido
+                const data = JSON.parse(message.toString());
+                // Crear una nueva instancia usando el modelo HuellaModel
+                const newRegistroHuella = new AlertasProtocolosAccionablesModel({
+                  usuario: data.usuario,             // Valor numérico
+                  hora: data.hora ? new Date(data.hora) : new Date(),  // Convertir a Date o usar la fecha actual
+                  idZona: data.idZona,                       // Identificador de zona
+                });
+                // Guardar en MongoDB
+                await newRegistroHuella.save();
+                console.log('✅ Datos de sensor (huella) almacenados en MongoDB');
+              } catch { console.log("Error en el mensaje de huella") } */
             break;
         }
       });
