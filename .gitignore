@@ -157,3 +157,10 @@ dist
 # Ignore all local history of files
 .history
 .ionide
+
+
+## Servicio CV
+servicioCV/venv/
+
+## Servicio Forecasting
+ServicioForecasting/venv/
