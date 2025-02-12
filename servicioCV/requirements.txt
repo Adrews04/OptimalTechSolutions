@@ -1,0 +1,7 @@
+nginx
+Flask
+opencv-python
+mediapipe
+numpy
+paho-mqtt
+pillow
