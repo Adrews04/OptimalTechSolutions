@@ -161,3 +161,6 @@ dist
 
 ## Servicio CV
 servicioCV/venv/
+
+## Servicio Forecasting
+ServicioForecasting/venv/

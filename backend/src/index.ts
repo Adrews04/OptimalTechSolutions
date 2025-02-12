@@ -12,6 +12,7 @@ import clienteMalFuncionamientoRouter from './routes/cliente/clienteMalFuncionam
 import clienteReservasRouter from './routes/cliente/clienteReservas_R'
 import clienteSatisfaccionRouter from './routes/cliente/clienteSatisfaccion_R'
 import mantenimientoReportesRouter from './routes/mantenimiento/mantenimientoReportes_R'
+import rutaForecasting from './routes/rutasServicios/forecastRuta';
 
 import { simularSensorLuz } from './simuladorSensores/sensorLuz';
 import { simularSensorAgua } from './simuladorSensores/sensorAgua';
@@ -70,6 +71,7 @@ app.use(clienteMalFuncionamientoRouter);
 app.use(clienteReservasRouter);
 app.use(clienteSatisfaccionRouter);
 app.use(mantenimientoReportesRouter);
+app.use(rutaForecasting);
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
@@ -119,13 +121,13 @@ setInterval(async () => {
   await simularSensorLuz(5, 6); 
   await simularSensorLuz(5, 7);
           // ZONA 6
-  /* await simularSensorLuz(6, 1); 
+  await simularSensorLuz(6, 1); 
   await simularSensorLuz(6, 2); 
   await simularSensorLuz(6, 3); 
   await simularSensorLuz(6, 4);
   await simularSensorLuz(6, 5); 
   await simularSensorLuz(6, 6); 
-  await simularSensorLuz(6, 7); */
+  await simularSensorLuz(6, 7);
 
 }, 40000);
 
@@ -179,13 +181,13 @@ setInterval(async () => {
   await simularSensorAgua(5, 7);
 
               //ZONA 6
-  /* await simularSensorAgua(6, 1);
+  await simularSensorAgua(6, 1);
   await simularSensorAgua(6, 2);
   await simularSensorAgua(6, 3);
   await simularSensorAgua(6, 4);
   await simularSensorAgua(6, 5);
   await simularSensorAgua(6, 6);
-  await simularSensorAgua(6, 7); */
+  await simularSensorAgua(6, 7);
 }, 40000);
 
 
@@ -196,55 +198,21 @@ setInterval(async () => {
   await simularSensorGas(1, 1);
   await simularSensorGas(1, 2);
   await simularSensorGas(1, 3);
-  await simularSensorGas(1, 4);
-  await simularSensorGas(1, 5);
-  await simularSensorGas(1, 6);
-  await simularSensorGas(1, 7);
 
               //ZONA 2    
   await simularSensorGas(2, 1);
   await simularSensorGas(2, 2);
   await simularSensorGas(2, 3);
-  await simularSensorGas(2, 4);
-  await simularSensorGas(2, 5);
-  await simularSensorGas(2, 6);
-  await simularSensorGas(2, 7);
 
               //ZONA 3    
   await simularSensorGas(3, 1);
   await simularSensorGas(3, 2);
   await simularSensorGas(3, 3);
-  await simularSensorGas(3, 4);
-  await simularSensorGas(3, 5);
-  await simularSensorGas(3, 6);
-  await simularSensorGas(3, 7);
 
               //ZONA 4    
   await simularSensorGas(4, 1);
   await simularSensorGas(4, 2);
   await simularSensorGas(4, 3);
-  await simularSensorGas(4, 4);
-  await simularSensorGas(4, 5);
-  await simularSensorGas(4, 6);
-  await simularSensorGas(4, 7);
-
-              //ZONA 5    
-  await simularSensorGas(5, 1);
-  await simularSensorGas(5, 2);
-  await simularSensorGas(5, 3);
-  await simularSensorGas(5, 4);
-  await simularSensorGas(5, 5);
-  await simularSensorGas(5, 6);
-  await simularSensorGas(5, 7);
-
-              //ZONA 6    
-  /* await simularSensorGas(6, 1);
-  await simularSensorGas(6, 2);
-  await simularSensorGas(6, 3);
-  await simularSensorGas(6, 4);
-  await simularSensorGas(6, 5);
-  await simularSensorGas(6, 6);  
-  await simularSensorGas(6, 7); */
 }, 40000)
 
 // ---------------------- SENSORES DE TEMPERATURA ----------------------
